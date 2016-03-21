@@ -1,8 +1,5 @@
 <?php
-/**
- * Class dummy
- * @author Charlie Chang <icharlie.osu@gmail.com>
- */
+
 class dummy
 {
     private $noCommentVar;
@@ -13,8 +10,9 @@ class dummy
      */
     private $withCommentVar;
 
+
     private function noComment (
-        array $a = [],
+        $a = [],
         array $b = []
     ) {
     }
