@@ -11,7 +11,9 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\ClassMethod;
 
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP5);
-$prettyPrinter = new PrettyPrinter\Standard;
+$prettyPrinter = new PrettyPrinter\Standard(
+    ['shortArraySyntax' => true]
+);
 $content = file_get_contents('./dummy.php');
 
 
@@ -56,8 +58,8 @@ try {
         echo "\n";
         echo "\n";
     }
+    echo preg_replace("/( +\/\*\*)/", "\n$1", $code);
 
-    echo $code;
 } catch (Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
@@ -83,14 +85,39 @@ function generate_classMethod_comment(ClassMethod $method)
 {
     $content = "/**\n";
     $content .= " * [{$method->name} description]\n";
+    $paramsComments = [];
     foreach ($method->params as $param) {
         $type = $param->type ?: '[type]';
-        $content .= " * @param  {$type}  {$param->name} [description]\n";
+        $paramsComments[] = " * @param  {$type}  {$param->name} [description]";
     }
+    $paramsComments = align_params_commnets($paramsComments);
+    $content .= implode("\n", $paramsComments) . "\n";
     if ($method->name != "__construct") {
         $content .= " * @return [type]    [description]\n";
     }
 
     $content .= " */";
     return $content;
+}
+
+
+function align_params_commnets(array $paramsComments = [])
+{
+    if (!count($paramsComments)) {
+        return [];
+    }
+
+    $lengths = array_map('strlen', $paramsComments);
+
+    $longest_comment = $paramsComments[array_search(max($lengths), $lengths)];
+    $words = explode(" ", $longest_comment);
+    $word_lengths = array_map('strlen', $words);
+
+    return array_map(function ($comment) use ($word_lengths) {
+        $comment_words = explode(" ", $comment);
+        for ($i=0, $len = count($comment_words); $i < $len; $i++) {
+            $comment_words[$i] = str_pad($comment_words[$i], $word_lengths[$i], " ", STR_PAD_RIGHT);
+        }
+        return implode(" ", $comment_words);
+    }, $paramsComments);
 }
