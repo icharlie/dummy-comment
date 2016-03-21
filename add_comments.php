@@ -9,9 +9,11 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\ClassMethod;
+use dummy\KeepOriginalValueLexer;
+use dummy\DummyPrinter;
 
-$parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP5);
-$prettyPrinter = new PrettyPrinter\Standard(
+$parser = (new ParserFactory)->create(ParserFactory::ONLY_PHP5, new KeepOriginalValueLexer);
+$prettyPrinter = new DummyPrinter(
     ['shortArraySyntax' => true]
 );
 $content = file_get_contents('./dummy.php');

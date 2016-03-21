@@ -1,5 +1,9 @@
 {
+    "autoload": {
+        "psr-4": { "dummy\\": "src/" }
+    },
     "require": {
-        "nikic/php-parser": "^2.0"
+        "nikic/php-parser": "^2.0",
+        "kevinlebrun/colors.php": "^1.0"
     }
 }
