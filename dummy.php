@@ -2,6 +2,13 @@
 
 class dummy
 {
+    private $noCommentVar;
+
+    /**
+     * [$withCommentVar description]
+     * @var [type]
+     */
+    private $withCommentVar;
 
 
     private function noComment (
@@ -10,5 +17,13 @@ class dummy
     ) {
         $content = "/**\n";
         $content .= " * [{$method->name} description]\n";
+    }
+
+
+    /**
+     * With comment function
+     */
+    public function withComment()
+    {
     }
 }
