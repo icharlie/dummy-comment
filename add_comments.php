@@ -32,7 +32,7 @@ try {
     foreach ($clasStmts as $stmt) {
         if (get_class($stmt) == 'PhpParser\Node\Stmt\Class_') {
             $classAttributes = $stmt->getAttributes();
-            if (!isset($attributes['comments'])) {
+            if (!isset($classAttributes['comments'])) {
                 $doc = new Doc(generate_class_comment($stmt));
                 $stmt->setAttribute('comments', [$doc]);
             }
@@ -57,10 +57,12 @@ try {
     $code = $prettyPrinter->prettyPrint($stmts);
     echo "<?php ";
     if (!$withNamespace) {
-        echo "\n";
-        echo "\n";
+        echo PHP_EOL;
+        echo PHP_EOL;
     }
-    echo preg_replace("/( +\/\*\*)/", "\n$1", $code);
+    echo preg_replace("/( +\/\*\*)/", "\n$1", $code)
+        . PHP_EOL
+        . PHP_EOL;
 
 } catch (Error $e) {
     echo 'Parse Error: ', $e->getMessage();

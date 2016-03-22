@@ -48,7 +48,7 @@ class Comment
             foreach ($clasStmts as $stmt) {
                 if (get_class($stmt) == 'PhpParser\Node\Stmt\Class_') {
                     $classAttributes = $stmt->getAttributes();
-                    if (!isset($attributes['comments'])) {
+                    if (!isset($classAttributes['comments'])) {
                         $doc = new Doc($this->generate_class_comment($stmt));
                         $stmt->setAttribute('comments', [$doc]);
                     }
@@ -72,11 +72,14 @@ class Comment
             $code = $prettyPrinter->prettyPrint($stmts);
             $newCode = "<?php ";
             if (!$withNamespace) {
-                $newCode .= "\n"
-                            ."\n";
+                $newCode .= PHP_EOL
+                            .PHP_EOL;
             }
             $newCode .= $code;
-            $newCode = preg_replace("/( +\/\*\*)/", "\n$1", $newCode);
+            $newCode = preg_replace("/( +\/\*\*)/", "\n$1", $newCode)
+                . PHP_EOL
+                . PHP_EOL;
+
             return $newCode;
         } catch (Error $e) {
             echo 'Parse Error: ', $e->getMessage();
