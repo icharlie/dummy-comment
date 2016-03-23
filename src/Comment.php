@@ -46,7 +46,9 @@ class Comment
                 $clasStmts = $stmts;
             }
             foreach ($clasStmts as $stmt) {
-                if (get_class($stmt) == 'PhpParser\Node\Stmt\Class_') {
+                if (get_class($stmt) == 'PhpParser\Node\Stmt\Class_'
+                    || get_class($stmt) == 'PhpParser\Node\Stmt\Interface_'
+                ) {
                     $classAttributes = $stmt->getAttributes();
                     if (!isset($classAttributes['comments'])) {
                         $doc = new Doc($this->generate_class_comment($stmt));
@@ -77,7 +79,6 @@ class Comment
             }
             $newCode .= $code;
             $newCode = preg_replace("/( +\/\*\*)/", "\n$1", $newCode)
-                . PHP_EOL
                 . PHP_EOL;
 
             return $newCode;
@@ -87,7 +88,7 @@ class Comment
     }
 
 
-    private function generate_class_comment(Class_ $class)
+    private function generate_class_comment($class)
     {
         $content = "/**\n";
         $content .= " * [{$class->name} description]\n";
@@ -111,12 +112,12 @@ class Comment
         $paramsComments = [];
         foreach ($method->params as $param) {
             $type = $param->type ?: '[type]';
-            $paramsComments[] = " * @param  {$type}  {$param->name} [description]";
+            $paramsComments[] = " * @param  {$type} \${$param->name} [description]";
         }
         $paramsComments = $this->align_params_commnets($paramsComments);
         $content .= implode("\n", $paramsComments) . "\n";
         if ($method->name != "__construct") {
-            $content .= " * @return [type]    [description]\n";
+            $content .= " * @return [type] [description]\n";
         }
 
         $content .= " */";
